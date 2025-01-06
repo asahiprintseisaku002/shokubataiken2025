@@ -22,6 +22,10 @@
         cursor: pointer;
       }
 
+      .hidden {
+        opacity: 0;
+      }
+
     </style>
     <script type="importmap">
       {
@@ -334,8 +338,26 @@
     textElement.addEventListener('touchstart', onInteract);
 
     function onInteract() {
-    // 回転フラグをトグル
+      // イベントの伝播を止める
+      event.stopPropagation();
+
+      // 回転フラグをトグル
       isRotating = !isRotating;
+
+      // .text の内容を変更
+      if (isRotating) {
+        textElement.classList.add('hidden'); // 非表示のアニメーション開始
+        setTimeout(() => {
+          textElement.textContent = "Click to Stop"; // 新しいメッセージに変更
+          textElement.classList.remove('hidden'); // 表示のアニメーション開始
+        }, 1200); // アニメーションが完了する時間 (transition と一致)
+      } else {
+        textElement.classList.add('hidden'); // 非表示のアニメーション開始
+        setTimeout(() => {
+          textElement.textContent = "Click to Rotate"; // 停止メッセージに変更
+          textElement.classList.remove('hidden'); // 表示のアニメーション開始
+        }, 1200);
+      }
     }
 
     // アニメーション関数を作成
@@ -391,7 +413,7 @@
     <canvas id="myCanvas">
     </canvas>
     <div>
-      <h2 class="text">Click!</h2>
+      <h2 class="text">Click to Rotate</h2>
     </div>
   </body>
 </html>
