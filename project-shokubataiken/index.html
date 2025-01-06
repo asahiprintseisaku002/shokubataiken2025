@@ -7,6 +7,21 @@
         overflow: hidden;
       }
 
+      .text {
+        position: fixed;
+        top: 75%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: #ffffff;
+        z-index: 100;
+        transition: opacity 0.8s;
+      }
+
+      .text:hover {
+        cursor: pointer;
+      }
+
     </style>
     <script type="importmap">
       {
@@ -312,9 +327,11 @@
     // タップまたはクリックでカードを回転させる
     let isRotating = false;
 
+    const textElement = document.querySelector('.text');
+
     // クリック/タップイベントリスナー
-    window.addEventListener('click', onInteract);
-    window.addEventListener('touchstart', onInteract);
+    textElement.addEventListener('click', onInteract);
+    textElement.addEventListener('touchstart', onInteract);
 
     function onInteract() {
     // 回転フラグをトグル
@@ -373,5 +390,8 @@
   <body>
     <canvas id="myCanvas">
     </canvas>
+    <div>
+      <h2 class="text">Click!</h2>
+    </div>
   </body>
 </html>
