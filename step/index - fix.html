@@ -1,0 +1,123 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ブラウザタブに表示されるタイトル</title>
+       <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+
+      .text {
+        position: fixed;
+        top: 75%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: #ffffff;
+        z-index: 100;
+        transition: opacity 0.8s;
+      }
+
+      .text:hover {
+        cursor: pointer;
+      }
+
+      .hidden {
+        opacity: 0;
+      }
+
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.152.2/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.152.2/examples/jsm/"
+        }
+      }
+    </script>
+    
+    <script type="module">
+      import * as THREE from "three";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+      import { FontLoader } from "three/addons/loaders/FontLoader.js";
+      import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+      import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
+      import { TransformControls } from 'three/addons/controls/TransformControls.js';
+      import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
+      // サイズを指定
+      const width = innerWidth;
+      const height = innerHeight;
+
+      // レンダラーを作成
+      const canvasElement = document.querySelector("#myCanvas");
+      const renderer = new THREE.WebGLRenderer({
+        canvas: document.querySelector('#myCanvas'), 
+        alpha: false,
+        antialias: true 
+      });
+      renderer.setSize(width.innerWidth, height.innerHeight);
+      renderer.setClearColor(0x030a24);
+
+      // シーンを作成
+      const scene = new THREE.Scene();
+      //フォグ
+      scene.fog = new THREE.Fog( 0x030a24, 400, 850 );
+
+      // カメラを作成
+      const camera = new THREE.PerspectiveCamera(45, width.innerWidth / height.innerHeight, 1, 3000);
+      // カメラの初期座標を設定
+      camera.position.set( 40, -40, 280);
+
+      // カメラコントローラーを作成
+      const controls = new OrbitControls(camera, canvasElement);
+
+      //ライト
+      const light = new THREE.AmbientLight( 0x404040 ); // soft white light
+      scene.add( light );
+
+      const directionalLight = new THREE.DirectionalLight( 0xffffff, 1.8);
+      scene.add( directionalLight );
+      directionalLight.position.set(0.0, 500.0, 500.0);
+      const lightGrop = new THREE.Group();
+      lightGrop.add(directionalLight);
+      scene.add(lightGrop);
+
+      //カード
+      
+
+    // アニメーション関数を作成
+    function animate() {
+    requestAnimationFrame(animate);
+
+    renderer.render(scene, camera);
+    }
+
+    animate();
+
+      // 初期化のために実行
+      onResize();
+      // リサイズイベント発生時に実行
+      window.addEventListener("resize", onResize);
+
+      function onResize() {
+        // サイズを取得
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        // レンダラーのサイズを調整する
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(width, height);
+
+        // カメラのアスペクト比を正す
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="myCanvas">
+    </canvas>
+  </body>
+</html>
