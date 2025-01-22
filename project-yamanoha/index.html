@@ -85,12 +85,300 @@
       scene.add(lightGrop);
 
       //カード
-      
+      const boxGeometry = new THREE.BoxGeometry(51.0, 55.0, 0.3);
+      const cardMaterial = new THREE.MeshPhongMaterial({color:0xfffff9});
+      const card = new THREE.Mesh (boxGeometry, cardMaterial);
+      scene.add(card);
+      card.position.set(-25.5, 0.0, 0.0);
 
+      function loadTextureAsync(path) {
+        return new Promise((resolve, reject) => {
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.load(
+                path,
+                (texture) => resolve(texture), // 成功時
+                undefined, // ロード進捗は不要
+                (error) => reject(error) // エラー時
+            );
+        });
+    }
+
+    // 非同期でテクスチャを設定する関数
+    async function setupScene() {
+        try {
+            // テクスチャを非同期でロード
+            const texture = await loadTextureAsync('./lib/27633018_m.jpg'); // 画像のパスを指定
+
+            // card2Material2にテクスチャを適用
+            const card2Material2 = new THREE.MeshPhongMaterial({
+                map: texture
+            });
+
+            // 他のマテリアルやジオメトリの設定
+            const card2Material1 = new THREE.MeshPhongMaterial({ color: 0xfffff9 });
+            const card2Materials = [
+                card2Material1,
+                card2Material1,
+                card2Material1,
+                card2Material1,
+                card2Material2, // テクスチャを適用したマテリアル
+                card2Material1,
+            ];
+
+            const box2Geometry = new THREE.BoxGeometry(40.0, 55.0, 0.3);
+            const card2 = new THREE.Mesh(box2Geometry, card2Materials);
+            scene.add(card2);
+            card2.position.set(20.0, 0.0, 0.0);
+            cardGroup.add(card, card2);
+
+            console.log("テクスチャのロードとシーンのセットアップが完了しました！");
+        } catch (error) {
+            console.error("テクスチャのロード中にエラーが発生しました:", error);
+        }
+    }
+    // シーンのセットアップを呼び出す
+    setupScene();
+
+        //校章
+        const svgloader = new SVGLoader();
+
+svgloader.load(
+  './lib/kousyou.svg',                //@@@ 画像のファイル
+  function ( data ) {
+
+    const paths = data.paths;
+    const kosyoSVGgroup = new THREE.Group();
+
+    for ( let i = 0; i < paths.length; i ++ ) {
+
+      const path = paths[ i ];
+
+      const material = new THREE.MeshPhongMaterial( {
+        color: path.color,
+        side: THREE.DoubleSide,
+        depthWrite: true
+      } );
+
+      const shapes = SVGLoader.createShapes( path );
+
+      for ( let j = 0; j < shapes.length; j ++ ) {
+        const shape = shapes[ j ];
+
+        const extrudeSettings = {
+          depth: 10, // 厚みの深さ
+          bevelEnabled: false // ベベルを無効化
+        };
+
+        const geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
+        const mesh = new THREE.Mesh( geometry, material );
+        kosyoSVGgroup.add( mesh );
+      }
+    }
+    scene.add( kosyoSVGgroup );
+    kosyoSVGgroup.scale.set(0.08, -0.08, 0.08);
+    kosyoSVGgroup.position.set(-45.0, 24.0, 0.5);
+    cardGroup.add(kosyoSVGgroup);
+  },
+  // called when loading is in progress
+  function ( xhr ) {
+    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+  },
+  // called when loading has errors
+  function ( error ) {
+    console.log( 'An error happened' );
+  }
+);
+
+ //カードのテキスト
+ const loader = new FontLoader();
+      loader.load('./lib/Noto Sans JP Medium_Regular.json', (font) => {
+        // テキスト名前
+        const textNameGeometry = new TextGeometry('山入端　新之介', {
+          font: font,
+          size: 5,
+          height: 1, // テキストの厚み
+          curveSegments: 12,
+          bevelEnabled: false, // テキストのベベル（斜角）
+          bevelThickness: 1,
+          bevelSize: 1,
+          bevelSegments: 5
+        });
+        const textMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
+        const textNameMesh = new THREE.Mesh(textNameGeometry, textMaterial);
+
+        //テキスト1
+        const text1Geometry = new TextGeometry(' 好きなスポーツ：野球', {
+          font: font,
+          size: 2.5,
+          height: 1, // テキストの厚み
+          curveSegments: 12,
+          bevelEnabled: false, // テキストのベベル（斜角）
+        });
+        const text1Mesh = new THREE.Mesh(text1Geometry, textMaterial);
+
+        //テキスト2
+        const text2Geometry = new TextGeometry(' 好きな野球チーム：ジャイアンツ', {
+          font: font,
+          size: 2.5,
+          height: 1, // テキストの厚み
+          curveSegments: 12,
+          bevelEnabled: false, // テキストのベベル（斜角）
+        });
+        const text2Mesh = new THREE.Mesh(text2Geometry, textMaterial);
+
+        //テキスト3
+        const text3Geometry = new TextGeometry(' 尊敬する人：阿部慎之助', {
+          font: font,
+          size: 2.5,
+          height: 1, // テキストの厚み
+          curveSegments: 12,
+          bevelEnabled: false, // テキストのベベル（斜角）
+        });
+        const text3Mesh = new THREE.Mesh(text3Geometry, textMaterial);
+
+        //テキスト4
+        const text4Geometry = new TextGeometry(' 好きな映画：タイタニック', {
+          font: font,
+          size: 2.5,
+          height: 1, // テキストの厚み
+          curveSegments: 12,
+          bevelEnabled: false, // テキストのベベル（斜角）
+        });
+        const text4Mesh = new THREE.Mesh(text4Geometry, textMaterial);
+
+        // テキストをシーンに追加
+        scene.add(textNameMesh);
+        scene.add(text1Mesh);
+        scene.add(text2Mesh);
+        scene.add(text3Mesh);
+        scene.add(text4Mesh);
+
+        // テキストの位置を調整
+        textNameMesh.position.set(-45, 4, 0.5);
+        text1Mesh.position.set(-45, -5, 0.5);
+        text2Mesh.position.set(-45, -10, 0.5);
+        text3Mesh.position.set(-45, -15, 0.5);
+        text4Mesh.position.set(-45, -20, 0.5);
+
+        cardGroup.add(textNameMesh);
+        cardGroup.add(text1Mesh);
+        cardGroup.add(text2Mesh);
+        cardGroup.add(text3Mesh);
+        cardGroup.add(text4Mesh);
+      });
+      //カードグループを作成して後で画像、テキスト、校章を追加する
+      const cardGroup = new THREE.Group();
+      scene.add(cardGroup);
+
+
+      //青い球体
+      const sphereGeometry = new THREE.SphereGeometry( 300, 32, 16 ); 
+      const spherematerial = new THREE.MeshPhongMaterial( { color: 0x5cb3e8 } ); 
+      const sphere = new THREE.Mesh( sphereGeometry, spherematerial ); 
+      scene.add( sphere );
+      sphere.position.set(50, -250, -400.0);
+
+      const sphereGroup = new THREE.Group();
+      scene.add(sphereGroup);
+      sphereGroup.add(sphere);
+
+      //赤い球体
+      const lilsphereGeometry = new THREE.SphereGeometry( 10, 32, 16 ); 
+      const lilspherematerial = new THREE.MeshPhongMaterial( { color: 0xe85f5c } ); 
+      const lilsphere = new THREE.Mesh( lilsphereGeometry, lilspherematerial ); 
+      scene.add( lilsphere );
+      lilsphere.position.set(150, 100, -1000.0);
+
+       // パーティクルをランダムに配置する
+       const particleCount = 1000; // パーティクルの数
+      const particleGeometry = new THREE.BufferGeometry();
+      const positions = [];
+
+      const range = 500; // 各軸の範囲
+        for (let i = 0; i < particleCount; i++) {
+            positions.push(
+                (Math.random() - 0.5) * range * 2, // x
+                (Math.random() - 0.5) * range * 2, // y
+                (Math.random() - 0.5) * range * 2  // z
+            );
+      }
+
+      particleGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+      const textureLoader = new THREE.TextureLoader();
+      const particleTexture = textureLoader.load('./lib/particlePoints.png');
+      // パーティクル用のマテリアル
+      const particleMaterial = new THREE.PointsMaterial({
+        size: 3, // パーティクルの直径（大きさ）
+        map: particleTexture,
+        transparent: true, // 透明部分を有効化
+        alphaTest: 0.5, // アルファチャンネルで透過部分を除外
+        depthWrite: false // 奥行きテストを無効化（透過を正しく処理）
+      });
+
+      // パーティクルシステムを作成
+      const particles = new THREE.Points(particleGeometry, particleMaterial);
+      scene.add(particles);
+
+      // 球体の円運動のパラメータ
+    let angle = 0; // 初期角度
+    const radius = 200; // 円の半径
+    const radiusRed = 400;
+    const radiusBlue = 70;
+    const speed = 0.02; // 回転速度（ラジアン単位）
+
+    // タップまたはクリックでカードを回転させる
+    let isRotating = false;
+
+    const textElement = document.querySelector('.text');
+
+    // クリック/タップイベントリスナー
+    textElement.addEventListener('click', onInteract);
+    textElement.addEventListener('touchstart', onInteract);
+
+    function onInteract() {
+      // イベントの伝播を止める
+      event.stopPropagation();
+
+      // 回転フラグをトグル
+      isRotating = !isRotating;
+
+      // .text の内容を変更
+      if (isRotating) {
+        textElement.classList.add('hidden'); // 非表示のアニメーション開始
+        setTimeout(() => {
+          textElement.textContent = "Click to Stop"; // 新しいメッセージに変更
+          textElement.classList.remove('hidden'); // 表示のアニメーション開始
+        }, 1200); // アニメーションが完了する時間 (transition と一致)
+      } else {
+        textElement.classList.add('hidden'); // 非表示のアニメーション開始
+        setTimeout(() => {
+          textElement.textContent = "Click to Rotate"; // 停止メッセージに変更
+          textElement.classList.remove('hidden'); // 表示のアニメーション開始
+        }, 1200);
+      }
+    }
     // アニメーション関数を作成
     function animate() {
     requestAnimationFrame(animate);
 
+    angle += speed;
+
+    lightGrop.position.x = radius * Math.cos(angle);
+    lightGrop.position.z = radius * Math.sin(angle);
+
+    lilsphere.position.x = radiusRed * Math.cos(angle / 2);
+    lilsphere.position.z = radiusRed * Math.sin(angle / 2); 
+
+    sphereGroup.position.x = radiusBlue * Math.cos(angle / 4);
+    sphereGroup.position.z = radiusBlue * Math.sin(angle / 4); 
+
+    particles.rotation.y -= 0.001;
+
+    if(isRotating) {
+      cardGroup.rotation.y -= 0.01;
+    }
+    
     renderer.render(scene, camera);
     }
 
@@ -120,7 +408,7 @@
     <canvas id="myCanvas">
     </canvas>
     <div>
-      <!--<h2 class="text">Click to Rotate</h2>-->
+      <h2 class="text">Click to Rotate</h2>
     </div>
   </body>
 </html>
