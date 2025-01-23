@@ -1,3 +1,9 @@
+<!--
+https://threejs.org/  // threejsの公式サイト ※英語
+https://ics.media/tutorial-three/  //ICS MEDIA 日本語で解説されていてわかりやすい　
+https://code.visualstudio.com/  //VScodeの公式サイト　インストール方法は日本語で書かれているページを参考にするとわかりやすい
+-->
+
 <html>
   <head>
     <meta charset="utf-8" />
@@ -16,11 +22,28 @@
         text-align: center;
         color: #ffffff;
         z-index: 100;
-        transition: opacity 0.8s;
+        transition: opacity 0.4s ease-in-out;
       }
 
       .text:hover {
         cursor: pointer;
+      }
+
+      .text.hidden {
+        opacity: 0;
+      }
+
+      .text.rotating {
+        animation: rotate 2s linear infinite;
+      }
+
+      @keyframes rotate {
+        from {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        to {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
       }
 
       .hidden {
@@ -326,7 +349,7 @@ svgloader.load(
     const radiusBlue = 70;
     const speed = 0.02; // 回転速度（ラジアン単位）
 
-    // タップまたはクリックでカードを回転させる
+    // タップまたはクリックで状態を切り替える
     let isRotating = false;
 
     const textElement = document.querySelector('.text');
@@ -335,27 +358,23 @@ svgloader.load(
     textElement.addEventListener('click', onInteract);
     textElement.addEventListener('touchstart', onInteract);
 
-    function onInteract() {
+    function onInteract(event) {
       // イベントの伝播を止める
       event.stopPropagation();
 
-      // 回転フラグをトグル
+      // 状態フラグをトグル
       isRotating = !isRotating;
 
-      // .text の内容を変更
-      if (isRotating) {
-        textElement.classList.add('hidden'); // 非表示のアニメーション開始
-        setTimeout(() => {
+      // .text の内容を切り替え
+      textElement.classList.add('hidden'); // 非表示のアニメーション開始
+      setTimeout(() => {
+        if (isRotating) {
           textElement.textContent = "Click to Stop"; // 新しいメッセージに変更
-          textElement.classList.remove('hidden'); // 表示のアニメーション開始
-        }, 1200); // アニメーションが完了する時間 (transition と一致)
-      } else {
-        textElement.classList.add('hidden'); // 非表示のアニメーション開始
-        setTimeout(() => {
+        } else {
           textElement.textContent = "Click to Rotate"; // 停止メッセージに変更
-          textElement.classList.remove('hidden'); // 表示のアニメーション開始
-        }, 1200);
-      }
+        }
+        textElement.classList.remove('hidden'); // 表示のアニメーション開始
+      }, 400); // 非表示アニメーションの完了時間に合わせる
     }
       
 
@@ -383,7 +402,6 @@ function animate() {
     renderer.render(scene, camera);
     }
 
-    animate();
     animate();
 
       // 初期化のために実行
